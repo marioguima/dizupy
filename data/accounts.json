@@ -2,10 +2,30 @@
     "dizu": {
         "username": "marioguimaemail01@gmail.com",
         "password": "*Mcsg2408",
-        "instagra": [
+        "instagram": [
             {
+                "active": "True",
                 "username": "biancaamaralbr",
-                "password": "*Bibiamaral"
+                "password": "*Bibiamaral",
+                "schedule": [
+                    "08:15",
+                    "11:26",
+                    "14:13",
+                    "18:37",
+                    "21:12"
+                ]
+            },
+            {
+                "active": "False",
+                "username": "marta_santos_35",
+                "password": "*Martinha35",
+                "schedule": [
+                    "08:35",
+                    "10:17",
+                    "12:47",
+                    "17:11",
+                    "19:42"
+                ]
             }
         ]
     }
