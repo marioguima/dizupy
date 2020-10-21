@@ -78,10 +78,11 @@ class Dizu:
         chrome_options.add_argument(
             f'--user-data-dir=C:\\Users\\mario\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 8')
         chrome_options.add_argument("disable-infobars")
+        # chrome_options.add_argument('--headless')
 
         driver = webdriver.Chrome(
             chrome_options=chrome_options, executable_path=os.path.dirname(os.path.realpath(__file__)) + '\\chromedriver.exe')
-        driver.maximize_window()
+        # driver.maximize_window()
         return driver
 
     def _get_element(self, xpath, attempts=5, _count=0):
@@ -126,6 +127,10 @@ class Dizu:
                             instagramPassword)
         self.selecionarPerfilInstagram(instagramUsername)
         self.executarTarefaSeguir()
+        print('----------')
+        print('Next Run:')
+        print(schedule.next_run().strftime("%d/%m/%Y %H:%M:%S"))
+        print('')
 
     def loginDizu(self, usuario, senha):
         self.driver.get(DIZU_LINK)
@@ -143,6 +148,9 @@ class Dizu:
         self._click(xDIZU_BTN_ACESSAR)
 
     def loginInstagram(self, usuario, senha):
+        print('Instagram Account:')
+        print('> ' + usuario)
+
         wait = WebDriverWait(self.driver, 10)
 
         # Store the ID of the original window
@@ -234,13 +242,19 @@ class Dizu:
                     self.driver.switch_to.window(window_handle)
                     break
 
+            # log perfil instagram
+            url = self.driver.current_url
+            print('instagram: ' + url)
+
             # AGUARDA O BOTÃO DE SEGUIR
             wait.until(EC.visibility_of_element_located(
                 (By.XPATH, xINSTA_BTN_SEGUIR)))
 
+            sleep(randint(2, 4))
             # SEGUIR
             self._click(xINSTA_BTN_SEGUIR)
 
+            sleep(randint(3, 5))
             # FECHAR A ABA
             self.driver.close()
 
@@ -275,39 +289,32 @@ dizu = Dizu()
 #         return start <= now or now < end
 
 
-# dizu.conectarGanharInstagram()
+# dizu.conectarGanharNoInstagram(dizu.dizuUsername,
+#                                dizu.dizuPassword,
+#                                dizu.instagramAccounts[0]['username'],
+#                                dizu.instagramAccounts[0]['password'])
+
 if __name__ == "__main__":
+    print('')
     for instagramAccount in dizu.instagramAccounts:
         if eval(instagramAccount['active']):
+            print('Instagram Account:')
+            print('> ' + instagramAccount['username'])
+            print('')
+            print('Schedeled Time:')
             for scheduledTime in instagramAccount['schedule']:
+                print('> ' + scheduledTime)
                 schedule.every().day.at(scheduledTime).do(dizu.conectarGanharNoInstagram,
-                                                        dizu.dizuUsername,
-                                                        dizu.dizuPassword,
-                                                        instagramAccount['username'],
-                                                        instagramAccount['password'])
-
-    # # verifica se a hora atual é menor ou igual a 9 da manhã e menor que 22
-    # if in_between(datetime.now().time(), time(9), time(22)):
-    #     # executa assim que entra
-    #     dizu.conectarGanharNoInstagram(dizu.dizuUsername, dizu.dizuPassword,
-    #                                    dizu.instagramAccounts[0]['username'],
-    #                                    dizu.instagramAccounts[0]['password'])
-
-    # # biancaamaralbr
-    # schedule.every().day.at("10:30").do(dizu.conectarGanharNoInstagram,
-    #                                     dizu.dizuUsername,
-    #                                     dizu.dizuPassword,
-    #                                     dizu.instagramAccounts[0]['username'],
-    #                                     dizu.instagramAccounts[0]['password'])
-
-    # # marta_santos_35
-    # schedule.every().day.at("10:45").do(dizu.conectarGanharNoInstagram,
-    #                                     dizu.dizuUsername,
-    #                                     dizu.dizuPassword,
-    #                                     dizu.instagramAccounts[1]['username'],
-    #                                     dizu.instagramAccounts[1]['password'])
-    # schedule.every().day.at("18:00").do(dizu.conectarGanharNoInstagram)
-    # schedule.every().day.at("22:00").do(dizu.conectarGanharNoInstagram)
+                                                          dizu.dizuUsername,
+                                                          dizu.dizuPassword,
+                                                          instagramAccount['username'],
+                                                          instagramAccount['password'])
+            print('----------')
+            print('')
+    if len(schedule.jobs) > 0:
+        print('Next Run:')
+        print(schedule.next_run().strftime("%d/%m/%Y %H:%M:%S"))
+        print('')
 
     while True:
         # if in_between(datetime.now().time(), time(9), time(22)):
